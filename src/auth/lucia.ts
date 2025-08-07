@@ -103,8 +103,8 @@ export class AuthService {
             value: sessionId,
             attributes: {
                 httpOnly: true,
-                secure,
-                sameSite: 'lax' as const,
+                secure: true,
+                sameSite: 'None',
                 path: '/',
                 maxAge: this.SESSION_DURATION / 1000 // Convert to seconds
             }
