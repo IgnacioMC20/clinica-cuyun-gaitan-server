@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES6",                         // Es preferible para Node.js
     "module": "commonjs",
     "esModuleInterop": true,
-    "strict": false,
-    "noImplicitAny": false,
-    "outDir": "dist",
-    "skipLibCheck": true
+    "strict": false,                           // Activar el modo estricto
+    "noImplicitAny": false,                    // Evitar el uso de 'any' implícito
+    "outDir": "dist",                         // Directorio de salida
+    "skipLibCheck": true                      // Opcional, mejora el rendimiento en grandes proyectos
   },
-  "include": ["src", "../shared"]
+  "include": [
+    "src", 
+    "../shared"                              // Asegúrate de que esta ruta es válida
+  ]
 }

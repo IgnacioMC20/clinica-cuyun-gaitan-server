@@ -1,5 +1,5 @@
 import { Schema, model, Document, Model } from 'mongoose';
-import { IPatient, PatientNote, PATIENT_VALIDATION } from '../../../shared/types';
+import { IPatient, PatientNote, PATIENT_VALIDATION } from '../shared/types';
 
 // Extend the shared interface with Mongoose Document
 export interface IPatientDocument extends Omit<IPatient, 'id'>, Document {

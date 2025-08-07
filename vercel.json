@@ -3,21 +3,21 @@
   "name": "clinica-server",
   "builds": [
     {
-      "src": "src/index.ts",
+      "src": "src/index.ts",  
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["dist/**"]
+        "includeFiles": ["dist/**"]  
       }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/src/index.ts"
+      "dest": "/dist/index.js"  
     }
   ],
   "functions": {
-    "src/index.ts": {
+    "dist/index.js": {
       "maxDuration": 30,
       "memory": 1024
     }
