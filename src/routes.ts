@@ -498,7 +498,13 @@ const routes: FastifyPluginAsync = async (app) => {
                 id: patient._id.toString(),
                 createdAt: patient.createdAt.toISOString(),
                 updatedAt: patient.updatedAt.toISOString(),
-                visitDate: new Date(patient.visitDate).toISOString()
+                visitDate: new Date(patient.visitDate).toISOString(),
+                ...(patient.birthdate && { birthdate: new Date(patient.birthdate).toISOString() }),
+                notes: patient.notes.map((note: any) => ({
+                    ...note.toObject(),
+                    id: note._id.toString(),
+                    date: new Date(note.date).toISOString()
+                }))
             };
 
             return reply.send(response);
@@ -507,6 +513,70 @@ const routes: FastifyPluginAsync = async (app) => {
             return reply.status(500).send({
                 error: 'Internal Server Error',
                 message: 'Failed to delete note'
+            });
+        }
+    });
+
+    // PUT /api/patients/:id/notes/:noteId - Update specific note from patient
+    app.put('/patients/:id/notes/:noteId', async (request, reply) => {
+        try {
+            const { id, noteId } = request.params as { id: string; noteId: string };
+            const { title, content } = request.body as { title: string; content: string };
+
+            if (!title || !content) {
+                return reply.status(400).send({
+                    error: 'Validation Error',
+                    message: 'Title and content are required'
+                });
+            }
+
+            const patient = await Patient.findById(id);
+
+            if (!patient) {
+                return reply.status(404).send({
+                    error: 'Not Found',
+                    message: 'Patient not found'
+                });
+            }
+
+            // Find the note to update
+            const noteIndex = patient.notes.findIndex((note: any) => note._id?.toString() === noteId);
+
+            if (noteIndex === -1) {
+                return reply.status(404).send({
+                    error: 'Not Found',
+                    message: 'Note not found'
+                });
+            }
+
+            // Update the note
+            patient.notes[noteIndex].title = title.trim();
+            patient.notes[noteIndex].content = content.trim();
+            patient.notes[noteIndex].date = new Date(); // Update the modification date
+
+            await patient.save();
+
+            // Transform response
+            const response = {
+                ...patient.toObject(),
+                id: patient._id.toString(),
+                createdAt: patient.createdAt.toISOString(),
+                updatedAt: patient.updatedAt.toISOString(),
+                visitDate: new Date(patient.visitDate).toISOString(),
+                ...(patient.birthdate && { birthdate: new Date(patient.birthdate).toISOString() }),
+                notes: patient.notes.map((note: any) => ({
+                    ...note.toObject(),
+                    id: note._id.toString(),
+                    date: new Date(note.date).toISOString()
+                }))
+            };
+
+            return reply.send(response);
+        } catch (error) {
+            request.log.error('Error updating note:', error);
+            return reply.status(500).send({
+                error: 'Internal Server Error',
+                message: 'Failed to update note'
             });
         }
     });
